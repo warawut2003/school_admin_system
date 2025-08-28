@@ -46,7 +46,7 @@ export async function createStudent(_: any, formData: FormData) {
             },
         });
         
-        revalidatePath('/students'); 
+        revalidatePath('/'); 
 
         return { message: 'เพิ่มข้อมูลนักศึกษาสำเร็จ' };
     } catch (error) {
@@ -93,7 +93,7 @@ export async function updateStudent(id: string, _: any, formData: FormData) {
             },
         });
 
-        revalidatePath('/students');
+        revalidatePath('/');
         return { message: 'แก้ไขข้อมูลนักศึกษาสำเร็จ' };
     } catch (error) {
         if (error instanceof Error) {
@@ -107,17 +107,28 @@ export async function updateStudent(id: string, _: any, formData: FormData) {
     }
 }
 
-export async function deleteStudent(_: FormData, id: string) {
+export async function deleteStudent(id: string) {
     try {
+        // ค้นหานักศึกษาที่จะลบ (เพื่อตรวจสอบว่ามีอยู่จริง)
+        const student = await prisma.student.findUnique({
+            where: { stdId: id },
+        });
+
+        if (!student) {
+            return { message: 'ไม่พบข้อมูลนักศึกษาที่ต้องการลบ' };
+        }
+
+        // ลบข้อมูลนักศึกษา
         await prisma.student.delete({
             where: { stdId: id },
         });
 
-        revalidatePath('/students');
+        // อัปเดตเส้นทางเพื่อรีเฟรช UI
+        revalidatePath('/');
+        
         return { message: 'ลบข้อมูลนักศึกษาสำเร็จ' };
     } catch (error) {
         console.error('Failed to delete student:', error);
         return { message: 'เกิดข้อผิดพลาดในการลบข้อมูล' };
     }
 }
-

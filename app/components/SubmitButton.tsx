@@ -9,7 +9,7 @@ export default function SubmitButton() {
         <button
             type="submit"
             className="w-full py-2 px-4 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition-colors"
-            disabled={pending} // ปิดการใช้งานปุ่มเมื่อกำลังประมวลผล
+            disabled={pending} 
         >
             {pending ? 'กำลังเพิ่มข้อมูล...' : 'เพิ่มข้อมูลนักศึกษา'}
         </button>
